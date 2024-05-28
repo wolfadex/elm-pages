@@ -37,13 +37,13 @@ down into the final `Data` value, it won't end up in the client!
 
 -}
 
+import Ansi.Color
 import BackendTask exposing (BackendTask)
 import BackendTask.Http
 import BackendTask.Internal.Request
 import FatalError exposing (FatalError)
 import Json.Decode as Decode
 import Json.Encode as Encode
-import TerminalText
 
 
 {-| -}
@@ -78,11 +78,11 @@ expect envVariableName =
                         (FatalError.recoverable
                             { title = "Missing Env Variable"
                             , body =
-                                [ TerminalText.text "BackendTask.Env.expect was expecting a variable `"
-                                , TerminalText.yellow envVariableName
-                                , TerminalText.text "` but couldn't find a variable with that name."
+                                [ "BackendTask.Env.expect was expecting a variable `"
+                                , Ansi.Color.fontColor Ansi.Color.yellow envVariableName
+                                , "` but couldn't find a variable with that name."
                                 ]
-                                    |> TerminalText.toString
+                                    |> String.concat
                             }
                             (MissingEnvVariable envVariableName)
                         )

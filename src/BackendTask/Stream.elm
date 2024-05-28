@@ -240,6 +240,7 @@ export async function customWriteStream(input, { cwd, env, quiet }) {
 
 -}
 
+import Ansi.Color
 import BackendTask exposing (BackendTask)
 import BackendTask.Http exposing (Body)
 import BackendTask.Internal.Request
@@ -249,7 +250,6 @@ import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 import Pages.Internal.StaticHttpBody
 import RequestsAndPending
-import TerminalText
 
 
 {-| Once you've defined a `Stream`, it can be turned into a `BackendTask` that will run it (and optionally read its output and metadata).
@@ -1154,26 +1154,26 @@ errorToString error =
     , body =
         (case error of
             BackendTask.Http.BadUrl string ->
-                [ TerminalText.text ("BadUrl " ++ string)
+                [ "BadUrl " ++ string
                 ]
 
             BackendTask.Http.Timeout ->
-                [ TerminalText.text "Timeout"
+                [ "Timeout"
                 ]
 
             BackendTask.Http.NetworkError ->
-                [ TerminalText.text "NetworkError"
+                [ "NetworkError"
                 ]
 
             BackendTask.Http.BadStatus metadata _ ->
-                [ TerminalText.text "BadStatus: "
-                , TerminalText.red (String.fromInt metadata.statusCode)
-                , TerminalText.text (" " ++ metadata.statusText)
+                [ "BadStatus: "
+                , Ansi.Color.fontColor Ansi.Color.red (String.fromInt metadata.statusCode)
+                , " " ++ metadata.statusText
                 ]
 
             BackendTask.Http.BadBody _ string ->
-                [ TerminalText.text ("BadBody: " ++ string)
+                [ "BadBody: " ++ string
                 ]
         )
-            |> TerminalText.toString
+            |> String.concat
     }

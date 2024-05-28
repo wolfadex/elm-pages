@@ -49,12 +49,12 @@ plain old JSON in Elm.
 
 -}
 
+import Ansi.Color
 import BackendTask exposing (BackendTask)
 import BackendTask.Http
 import BackendTask.Internal.Request
 import FatalError exposing (FatalError)
 import Json.Decode as Decode exposing (Decoder)
-import TerminalText
 
 
 frontmatter : Decoder frontmatter -> Decoder frontmatter
@@ -130,7 +130,7 @@ It's common to parse the body with a markdown parser or other format.
                     )
             )
             "foo.md"
-                |> BackendTask.allowFatal
+            |> BackendTask.allowFatal
 
     markdownToView :
         String
@@ -377,9 +377,7 @@ jsonFile jsonFileDecoder filePath =
                             FatalError.recoverable
                                 { title = "JSON Decoding Error"
                                 , body =
-                                    [ TerminalText.text (Decode.errorToString jsonDecodeError)
-                                    ]
-                                        |> TerminalText.toString
+                                    Decode.errorToString jsonDecodeError
                                 }
                                 (DecodingError jsonDecodeError)
                         )
@@ -422,11 +420,11 @@ errorDecoder filePath =
         (FatalError.recoverable
             { title = "File Doesn't Exist"
             , body =
-                [ TerminalText.text "Couldn't find file at path `"
-                , TerminalText.yellow filePath
-                , TerminalText.text "`"
+                [ "Couldn't find file at path `"
+                , Ansi.Color.fontColor Ansi.Color.yellow filePath
+                , "`"
                 ]
-                    |> TerminalText.toString
+                    |> String.concat
             }
             FileDoesntExist
         )
