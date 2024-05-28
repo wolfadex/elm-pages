@@ -120,13 +120,13 @@ But often JavaScript libraries and core APIs will give you JS Date objects, so t
 
 -}
 
+import Ansi.Color
 import BackendTask exposing (BackendTask)
 import BackendTask.Http
 import Date
 import FatalError exposing (FatalError)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
-import TerminalText
 import Time
 
 
@@ -158,11 +158,11 @@ run portName input decoder =
                                     FatalError.recoverable
                                         { title = "Custom BackendTask Error"
                                         , body =
-                                            [ TerminalText.text "Something went wrong in a call to BackendTask.Custom.run. I expected to find a port named `"
-                                            , TerminalText.yellow portName
-                                            , TerminalText.text "` but I couldn't find it. Is the function exported in your custom-backend-task file?"
+                                            [ "Something went wrong in a call to BackendTask.Custom.run. I expected to find a port named `"
+                                            , Ansi.Color.fontColor Ansi.Color.yellow portName
+                                            , "` but I couldn't find it. Is the function exported in your custom-backend-task file?"
                                             ]
-                                                |> TerminalText.toString
+                                                |> String.concat
                                         }
                                         (CustomBackendTaskNotDefined { name = portName })
                                         |> Decode.succeed
@@ -176,12 +176,12 @@ run portName input decoder =
                                                 FatalError.recoverable
                                                     { title = "Custom BackendTask Error"
                                                     , body =
-                                                        [ TerminalText.text "Something went wrong in a call to BackendTask.Custom.run. I found an export called `"
-                                                        , TerminalText.yellow portName
-                                                        , TerminalText.text "` but I expected its type to be function, but instead its type was: "
-                                                        , TerminalText.red incorrectType
+                                                        [ "Something went wrong in a call to BackendTask.Custom.run. I found an export called `"
+                                                        , Ansi.Color.fontColor Ansi.Color.yellow portName
+                                                        , "` but I expected its type to be function, but instead its type was: "
+                                                        , Ansi.Color.fontColor Ansi.Color.red incorrectType
                                                         ]
-                                                            |> TerminalText.toString
+                                                            |> String.concat
                                                     }
                                                     ExportIsNotFunction
                                             )
@@ -190,9 +190,7 @@ run portName input decoder =
                                     FatalError.recoverable
                                         { title = "Custom BackendTask Error"
                                         , body =
-                                            [ TerminalText.text "Something went wrong in a call to BackendTask.Custom.run. I couldn't find your custom-backend-task file. Be sure to create a 'custom-backend-task.ts' or 'custom-backend-task.js' file."
-                                            ]
-                                                |> TerminalText.toString
+                                            "Something went wrong in a call to BackendTask.Custom.run. I couldn't find your custom-backend-task file. Be sure to create a 'custom-backend-task.ts' or 'custom-backend-task.js' file."
                                         }
                                         MissingCustomBackendTaskFile
                                         |> Decode.succeed
@@ -206,11 +204,11 @@ run portName input decoder =
                                                 FatalError.recoverable
                                                     { title = "Custom BackendTask Error"
                                                     , body =
-                                                        [ TerminalText.text "Something went wrong in a call to BackendTask.Custom.run. I couldn't import the port definitions file, because of this exception:\n\n"
-                                                        , TerminalText.red errorMessage
-                                                        , TerminalText.text "\n\nAre there syntax errors or exceptions thrown during import?"
+                                                        [ "Something went wrong in a call to BackendTask.Custom.run. I couldn't import the port definitions file, because of this exception:\n\n"
+                                                        , Ansi.Color.fontColor Ansi.Color.red errorMessage
+                                                        , "\n\nAre there syntax errors or exceptions thrown during import?"
                                                         ]
-                                                            |> TerminalText.toString
+                                                            |> String.concat
                                                     }
                                                     ErrorInCustomBackendTaskFile
                                             )
@@ -224,11 +222,11 @@ run portName input decoder =
                                                 FatalError.recoverable
                                                     { title = "Custom BackendTask Error"
                                                     , body =
-                                                        [ TerminalText.text "Something went wrong in a call to BackendTask.Custom.run. I was able to import the port definitions file, but when running it I encountered this exception:\n\n"
-                                                        , TerminalText.red (Encode.encode 2 portCallError)
-                                                        , TerminalText.text "\n\nYou could add a `try`/`catch` in your `custom-backend-task` JavaScript code to handle that error."
+                                                        [ "Something went wrong in a call to BackendTask.Custom.run. I was able to import the port definitions file, but when running it I encountered this exception:\n\n"
+                                                        , Ansi.Color.fontColor Ansi.Color.red (Encode.encode 2 portCallError)
+                                                        , "\n\nYou could add a `try`/`catch` in your `custom-backend-task` JavaScript code to handle that error."
                                                         ]
-                                                            |> TerminalText.toString
+                                                            |> String.concat
                                                     }
                                                     (CustomBackendTaskException portCallError)
                                             )
@@ -239,12 +237,12 @@ run portName input decoder =
                                             FatalError.recoverable
                                                 { title = "Custom BackendTask Error"
                                                 , body =
-                                                    [ TerminalText.text "Something went wrong in a call to BackendTask.Custom.run. I was able to import the port definitions file, but when running it I encountered this exception:\n\n"
-                                                    , TerminalText.red exceptionMessage
-                                                    , TerminalText.text ("\n\n" ++ (stackTrace |> Maybe.withDefault "\n"))
-                                                    , TerminalText.text "\n\nYou could add a `try`/`catch` in your `custom-backend-task` JavaScript code to handle that error."
+                                                    [ "Something went wrong in a call to BackendTask.Custom.run. I was able to import the port definitions file, but when running it I encountered this exception:\n\n"
+                                                    , Ansi.Color.fontColor Ansi.Color.red exceptionMessage
+                                                    , "\n\n" ++ (stackTrace |> Maybe.withDefault "\n")
+                                                    , "\n\nYou could add a `try`/`catch` in your `custom-backend-task` JavaScript code to handle that error."
                                                     ]
-                                                        |> TerminalText.toString
+                                                        |> String.concat
                                                 }
                                                 (NonJsonException exceptionMessage)
                                         )
@@ -255,11 +253,11 @@ run portName input decoder =
                                     FatalError.recoverable
                                         { title = "Custom BackendTask Error"
                                         , body =
-                                            [ TerminalText.text "Something went wrong in a call to BackendTask.Custom.run. I expected to find a port named `"
-                                            , TerminalText.yellow portName
-                                            , TerminalText.text "`."
+                                            [ "Something went wrong in a call to BackendTask.Custom.run. I expected to find a port named `"
+                                            , Ansi.Color.fontColor Ansi.Color.yellow portName
+                                            , "`."
                                             ]
-                                                |> TerminalText.toString
+                                                |> String.concat
                                         }
                                         ErrorInCustomBackendTaskFile
                                         |> Decode.succeed

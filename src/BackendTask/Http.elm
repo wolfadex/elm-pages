@@ -99,6 +99,7 @@ For production builds, the default caching will ignore both the implicit and exp
 
 -}
 
+import Ansi.Color
 import BackendTask exposing (BackendTask)
 import Base64
 import Bytes exposing (Bytes)
@@ -111,7 +112,6 @@ import Pages.Internal.StaticHttpBody as Body
 import Pages.StaticHttp.Request as HashRequest
 import Pages.StaticHttpRequest exposing (RawRequest(..))
 import RequestsAndPending
-import TerminalText
 
 
 {-| Build an empty body for a BackendTask.Http request. See [elm/http's `Http.emptyBody`](https://package.elm-lang.org/packages/elm/http/latest/Http#emptyBody).
@@ -665,26 +665,26 @@ errorToString error =
     , body =
         (case error of
             BadUrl string ->
-                [ TerminalText.text ("BadUrl " ++ string)
-                ]
+                [  ("BadUrl " ++ string)
+
 
             Timeout ->
-                [ TerminalText.text "Timeout"
+                [  "Timeout"
                 ]
 
             NetworkError ->
-                [ TerminalText.text "NetworkError"
+                [  "NetworkError"
                 ]
 
             BadStatus metadata _ ->
-                [ TerminalText.text "BadStatus: "
-                , TerminalText.red (String.fromInt metadata.statusCode)
-                , TerminalText.text (" " ++ metadata.statusText)
+                [  "BadStatus: "
+                , Ansi.Color.fontColor Ansi.Color.red (String.fromInt metadata.statusCode)
+                ,  (" " ++ metadata.statusText)
                 ]
 
             BadBody _ string ->
-                [ TerminalText.text ("BadBody: " ++ string)
+                [  ("BadBody: " ++ string)
                 ]
         )
-            |> TerminalText.toString
+            |> String.concat
     }
